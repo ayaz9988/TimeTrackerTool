@@ -1,5 +1,10 @@
 package backend
 
+import (
+	"sync"
+	"time"
+)
+
 type Timer struct {
 	started   time.Time
 	paused    bool
@@ -7,7 +12,6 @@ type Timer struct {
 	cancel    chan bool
 	timerChan chan time.Duration
 }
-
 
 func NewTimer() *Timer {
 	return &Timer{
