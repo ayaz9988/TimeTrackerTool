@@ -1,6 +1,5 @@
 package backend
 
-
 type Timer struct {
 	started   time.Time
 	paused    bool
