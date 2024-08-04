@@ -17,6 +17,7 @@ func main() {
 	w := a.NewWindow("Time Tracker")
 
 	tasks := &backend.Tasks{}
+	backend.SetDataFile()
 
 	// Load existing tasks
 	if loadedTasks, err := backend.LoadTask(); err == nil {
@@ -32,7 +33,7 @@ func main() {
 			return len(tasks.GetAll())
 		},
 		func() fyne.CanvasObject {
-			return widget.NewLabel("item") // Create a new label for each item
+			return widget.NewLabel("") // Create a new label for each item
 		},
 		func(i widget.ListItemID, o fyne.CanvasObject) {
 			task := tasks.GetAll()[i]
