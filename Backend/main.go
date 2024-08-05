@@ -22,7 +22,7 @@ type Task struct {
 }
 
 type Tasks struct {
-	tasks []Task
+	tasks []Task `json:"taskList"`
 	mutex sync.RWMutex
 }
 
@@ -123,7 +123,7 @@ func GetTime(task Task) string {
 }
 
 func SaveTask(tasks *Tasks) error {
-	data, err := json.MarshalIndent(tasks, "", "  ")
+	data, err := json.Marshal(tasks.tasks)
 	if err != nil {
 		return fmt.Errorf("failed to marshal tasks to JSON: %w", err)
 	}
