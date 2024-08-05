@@ -74,7 +74,7 @@ func main() {
 
 			go backend.StartTimer(*task, stopChan)
 
-			dialog.ShowInformation("Timer Started", fmt.Sprintf("Timer started for task: %s", task.Title), w)
+			//dialog.ShowInformation("Timer Started", fmt.Sprintf("Timer started for task: %s", task.Title), w)
 
 			// Update the elapsed time in the UI
 			go func() {
@@ -97,7 +97,7 @@ func main() {
 			backend.StopTimer(*task)
 			taskList.Refresh()
 			backend.SaveTask(tasks) // Save after stopping
-			dialog.ShowInformation("Timer Stopped", fmt.Sprintf("Timer stopped for task: %s", task.Title), w)
+			//dialog.ShowInformation("Timer Stopped", fmt.Sprintf("Timer stopped for task: %s", task.Title), w)
 		}
 	})
 
@@ -144,7 +144,10 @@ func main() {
 		}
 	})
 
-	content := container.NewVBox(addButton, startTimerButton, stopTimerButton, updateButton, completeButton, deleteButton, taskList)
+	con1 := container.NewHBox(addButton, startTimerButton, stopTimerButton, updateButton, completeButton, deleteButton)
+	con2 := container.NewScroll(taskList)
+	con2.SetMinSize(fyne.NewSize(300, 200))
+	content := container.NewVBox(con1, con2)
 	w.SetContent(content)
 	w.ShowAndRun()
 
