@@ -22,7 +22,7 @@ type Task struct {
 }
 
 type Tasks struct {
-	tasks []Task `json:"taskList"`
+	tasks []Task
 	mutex sync.RWMutex
 }
 
