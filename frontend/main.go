@@ -40,7 +40,13 @@ func main() {
 			elapsedTime := task.ElapsedTime.String()
 			// Assert the type safely
 			label := o.(*widget.Label)
-			label.SetText(fmt.Sprintf("%s (Complete: %v, Time: %s)", task.Title, task.IsComplete, elapsedTime))
+			var ch rune
+			if task.IsComplete {
+				ch = '🗸'
+			} else {
+				ch = '✗'
+			}
+			label.SetText(fmt.Sprintf("[%c] %s    Time: %s | CreatedAt: %v", ch, task.Title, elapsedTime, task.CreatedAt.Format("2006/01/02 15:04")))
 		},
 	)
 
@@ -116,7 +122,7 @@ func main() {
 				if response {
 					newTitle := titleEntry.Text
 					newContent := contentEntry.Text
-					backend.UpdateTask(&task, newTitle, newContent)
+					backend.UpdateTask(task, tasks, newTitle, newContent)
 					taskList.Refresh()
 					backend.SaveTask(tasks) // Save after updating
 				}
@@ -127,7 +133,11 @@ func main() {
 	completeButton := widget.NewButton("Complete Task", func() {
 		if selectedIndex >= 0 {
 			task := &tasks.GetAll()[selectedIndex]
-			backend.CompleteTask(task)
+			if !task.IsComplete {
+				backend.CompleteTask(task, true)
+			} else {
+				backend.CompleteTask(task, false)
+			}
 			taskList.Refresh()
 			backend.SaveTask(tasks) // Save after completing
 		}

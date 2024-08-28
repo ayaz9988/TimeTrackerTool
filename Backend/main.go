@@ -17,7 +17,6 @@ type Task struct {
 	CreatedAt   time.Time     `json:"createdAt"`
 	ElapsedTime time.Duration `json:"elapsedTime"`
 	IsComplete  bool          `json:"isComplete"`
-	Running     bool          `json:"alreadyStarted"`
 	Timer       *Timer
 }
 
@@ -75,7 +74,6 @@ func CreateTask(tasks *Tasks, title, content string) {
 		CreatedAt:  time.Now(),
 		Timer:      NewTimer(),
 		IsComplete: false,
-		Running:    false,
 	}
 	tasks.Append(task)
 }
@@ -91,10 +89,19 @@ func ListTasks(tasks *Tasks) <-chan Task {
 	return ch
 }
 
-func UpdateTask(task *Task, title, content string) {
-	task.Title = title
-	task.Content = content
-	task.CreatedAt = time.Now()
+func UpdateTask(task Task, tasks *Tasks, title, content string) {
+	id := task.ID
+	task = Task{
+		ID:          id,
+		Title:       title,
+		Content:     content,
+		CreatedAt:   task.CreatedAt,
+		Timer:       NewTimer(),
+		IsComplete:  task.IsComplete,
+		ElapsedTime: task.ElapsedTime,
+	}
+	tasks.Delete(id)
+	tasks.Append(task)
 }
 
 func DeleteTask(tasks *Tasks, taskID int) (*Tasks, error) {
@@ -114,8 +121,8 @@ func TimeOfCreation(task Task) time.Time {
 	return task.CreatedAt
 }
 
-func CompleteTask(task *Task) {
-	task.IsComplete = true
+func CompleteTask(task *Task, state bool) {
+	task.IsComplete = state
 }
 
 func GetTime(task Task) string {
@@ -158,6 +165,9 @@ func LoadTask() (*Tasks, error) {
 	err = json.Unmarshal(data, &tasks.tasks) // Unmarshal into tasks.tasks
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal tasks from JSON: %w", err)
+	}
+	for i := 0; i < len(tasks.tasks); i++ {
+		tasks.tasks[i].Timer = NewTimer()
 	}
 	return &tasks, nil
 }

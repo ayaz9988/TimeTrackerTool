@@ -20,11 +20,11 @@ func NewTimer() *Timer {
 	}
 }
 
-func (t *Timer) Start() {
+func (t *Timer) Start(tk Task) {
 	t.started = time.Now()
 	t.paused = false
 	t.stopped = false
-	go t.runTimer()
+	go t.runTimer(tk)
 }
 
 func (t *Timer) Pause() {
@@ -40,14 +40,14 @@ func (t *Timer) Cancel() {
 	t.cancel <- true
 }
 
-func (t *Timer) runTimer() {
+func (t *Timer) runTimer(tk Task) {
 	ticker := time.NewTicker(10 * time.Millisecond)
 	defer ticker.Stop()
 	for {
 		select {
 		case <-ticker.C:
 			if !t.paused && !t.stopped {
-				elapsed := time.Since(t.started)
+				elapsed := time.Since(t.started) + tk.ElapsedTime
 				t.timerChan <- elapsed
 			}
 		case <-t.cancel:
@@ -57,7 +57,7 @@ func (t *Timer) runTimer() {
 }
 
 func StartTimer(t Task, stopChan chan bool) {
-	t.Timer.Start()
+	t.Timer.Start(t)
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
