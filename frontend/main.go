@@ -79,6 +79,7 @@ func main() {
 		if selectedIndex >= 0 && !Running {
 			task := &tasks.GetAll()[selectedIndex]
 			stopChan := make(chan bool)
+			Running = !Running
 
 			go backend.StartTimer(*task, stopChan)
 
