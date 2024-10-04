@@ -1,8 +1,11 @@
-module github.com/ayaz9988/TimeTrackerTool
+module github.com/ayaz9988/TimeTrackerTool.git
 
 go 1.22.2
 
-require fyne.io/fyne/v2 v2.5.0
+require (
+	fyne.io/fyne/v2 v2.5.0
+	github.com/ayaz9988/TimeTrackerTool v0.0.0-20240828185501-3a594756f970
+)
 
 require (
 	fyne.io/systray v1.11.0 // indirect

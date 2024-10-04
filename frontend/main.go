@@ -27,6 +27,7 @@ func main() {
 	}
 
 	var selectedIndex int // Declare selectedIndex here
+	var Running bool
 
 	taskList := widget.NewList(
 		func() int {
@@ -53,6 +54,7 @@ func main() {
 	// Set OnSelected event handler once
 	taskList.OnSelected = func(id widget.ListItemID) {
 		selectedIndex = int(id) // Update selectedIndex
+		Running = false
 	}
 
 	addButton := widget.NewButton("Add Task", func() {
@@ -74,7 +76,7 @@ func main() {
 	})
 
 	startTimerButton := widget.NewButton("Start Timer", func() {
-		if selectedIndex >= 0 {
+		if selectedIndex >= 0 && !Running {
 			task := &tasks.GetAll()[selectedIndex]
 			stopChan := make(chan bool)
 
@@ -98,12 +100,13 @@ func main() {
 	})
 
 	stopTimerButton := widget.NewButton("Stop Timer", func() {
-		if selectedIndex >= 0 {
+		if selectedIndex >= 0 && !Running {
 			task := &tasks.GetAll()[selectedIndex]
 			backend.StopTimer(*task)
 			taskList.Refresh()
 			backend.SaveTask(tasks) // Save after stopping
 			//dialog.ShowInformation("Timer Stopped", fmt.Sprintf("Timer stopped for task: %s", task.Title), w)
+			Running = !Running
 		}
 	})
 
