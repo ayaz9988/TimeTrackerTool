@@ -101,7 +101,7 @@ func main() {
 	})
 
 	stopTimerButton := widget.NewButton("Stop Timer", func() {
-		if selectedIndex >= 0 && !Running {
+		if selectedIndex >= 0 && Running {
 			task := &tasks.GetAll()[selectedIndex]
 			backend.StopTimer(*task)
 			taskList.Refresh()
